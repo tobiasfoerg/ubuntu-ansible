@@ -1,0 +1,10 @@
+---
+
+- name: install {{ item }}
+  npm:
+    name: "{{ item }}"
+    global: yes
+  loop:
+    - npm
+    - yarn
+    - pnpm

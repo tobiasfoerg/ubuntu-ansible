@@ -1,0 +1,11 @@
+---
+
+- name: download aws-vault
+  become: true
+  get_url: url=https://github.com/99designs/aws-vault/releases/latest/download/aws-vault-linux-amd64 dest=/usr/local/bin/aws-vault
+
+- name: set file permissions
+  become: true
+  file:
+    path: /usr/local/bin/aws-vault
+    mode: "0755"

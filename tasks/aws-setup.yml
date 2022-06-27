@@ -1,0 +1,42 @@
+---
+- name: install package dependencies.
+  become: true
+  apt:
+    name: unzip
+    state: present
+
+- name: download the aws-cli.
+  get_url: url=https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip dest=/tmp/aws-cli.zip
+  register: aws_cli_download_bundle
+
+- name: unzip the installer.
+  shell: >
+    unzip /tmp/aws-cli.zip -d /tmp
+  when: aws_cli_download_bundle.changed
+  register: aws_cli_unzip_installer
+
+- name: install aws-cli package.
+  become: true
+  shell: /tmp/aws/install --update
+  args:
+    creates: /usr/bin/aws
+  when: aws_cli_unzip_installer.changed
+
+
+- name: download the aws-sam-cli.
+  get_url: url=https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip dest=/tmp/aws-sam-cli.zip
+  register: aws_sam_cli_download_bundle
+
+- name: unzip the installer.
+  shell: >
+    unzip /tmp/aws-sam-cli.zip -d /tmp/aws-sam-cli
+  when: aws_sam_cli_download_bundle.changed
+  register: aws_sam_cli_unzip_installer
+
+- name: install aws-sam-cli package.
+  become: true
+  shell: /tmp/aws-sam-cli/install --update
+  args:
+    creates: /usr/bin/aws
+  when: aws_sam_cli_unzip_installer.changed
+
