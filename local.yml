@@ -15,6 +15,15 @@
         - install
         - core
 
+    - name: upgrade apt
+      become: true
+      apt:
+        upgrade: yes
+        state: latest
+      tags:
+        - install
+        - core
+
   tasks:
     - include: tasks/zsh-setup.yml
     - include: tasks/node-setup.yml

@@ -3,9 +3,23 @@
   git_config:
     name: user.email
     scope: global
-    value: "tobias.foerg@sunny-systems.com"
+    value: "tobias.foerg@gmail.com"
+
 - name: git config name
   git_config:
     name: user.name
     scope: global
     value: "Tobias Förg"
+
+- name: add gh cli to keyring
+  shell: >
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+- name: install gh cli
+  become: true
+  apt:
+    name: gh
+    update_cache: true
+    state: latest
