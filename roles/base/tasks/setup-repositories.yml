@@ -1,0 +1,72 @@
+---
+- name: packages | github cli
+  block:
+    - name: repositories | add github cli keyring
+      apt_key:
+        url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+        state: present
+        keyring: /usr/share/keyrings/githubcli-archive-keyring.gpg
+
+    - name:
+        repositories | add github cli repository
+      apt_repository:
+        repo: "deb [arch={{custom_architecture}} signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main"
+        state: present
+        filename: github-cli
+
+- name: packages | chrome
+  block:
+    - name: repositories | add chrome key
+      apt_key:
+        url: https://dl-ssl.google.com/linux/linux_signing_key.pub
+        state: present
+        keyring: /usr/share/keyrings/chrome-stable.gpg
+
+    - name: repositories | add chrome repository
+      apt_repository:
+        repo: "deb [arch={{custom_architecture}} signed-by=/usr/share/keyrings/chrome-stable.gpg] https://dl.google.com/linux/chrome/deb/ stable main"
+        state: present
+        filename: google-chrome
+      register: chrome_repo
+
+- name: packages | docker
+  block:
+    - name: repositories | add docker key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+        keyring: /usr/share/keyrings/docker.gpg
+
+    - name: repositories | add docker repository
+      apt_repository:
+        repo: "deb [arch={{custom_architecture}} signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
+        state: present
+        filename: docker
+
+- name: packages | 1password
+  block:
+    - name: repositories | add 1password key
+      apt_key:
+        url: https://downloads.1password.com/linux/keys/1password.asc
+        state: present
+        keyring: /usr/share/keyrings/1password-archive-keyring.gpg
+
+    - name: repositories | add 1password repository
+      apt_repository:
+        repo: "deb [arch={{custom_architecture}} signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/{{custom_architecture}} stable main"
+        state: present
+        filename: docker
+
+- name: packages | vs code
+  block:
+    - name: repositories | add vs code key
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+        keyring: /usr/share/keyrings/microsoft.gpg
+
+    - name: repositories | add vs code repository
+      apt_repository:
+        repo: "deb [arch={{custom_architecture}} signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main"
+        state: present
+        filename: vscode

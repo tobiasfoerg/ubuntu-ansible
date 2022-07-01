@@ -1,33 +1,37 @@
 ---
 
-- name: LOCAL SETUP
-  hosts: localhost
+- hosts: localhost
   connection: local
 
   pre_tasks:
-    - name: update apt
+    - name: pre | pre_tasks
       become: true
-      apt:
-        force_apt_get: true
-        update_cache: true
-        state: present
-      tags:
-        - install
-        - core
+      block:
+        - name: pre | update apt
+          apt:
+            update_cache: true
+          changed_when: False
+      rescue:
+        - set_fact: task_failed=true
+      tags: always
 
-    - name: upgrade apt
-      become: true
-      apt:
-        upgrade: yes
-        state: latest
-      tags:
-        - install
-        - core
+    - name: pre | store architecture in fact
+      block:
+        - name: pre | dpkg architecture
+          shell: dpkg --print-architecture
+          register: architecture_command_output
 
-  tasks:
-    - include: tasks/zsh-setup.yml
-    - include: tasks/node-setup.yml
-    - include: tasks/npm-packages.yml
-    - include: tasks/git-setup.yml
-    - include: tasks/aws-setup.yml
-    - include: tasks/aws-vault-setup.yml
+        - name: pre | display architecture
+          debug:
+            var: architecture_command_output.stdout
+
+        - name: "pre | set_fact custom_architecture dpkg --print-architecture"
+          set_fact:
+            custom_architecture: "{{ architecture_command_output.stdout }}"
+      rescue:
+        - set_fact: task_failed=true
+
+- hosts: localhost
+  become: true
+  roles:
+    - base

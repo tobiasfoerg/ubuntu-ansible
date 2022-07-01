@@ -1,0 +1,4 @@
+---
+- name: base | configure ubuntu
+  block:
+    - import_tasks: setup-repositories.yml
