@@ -1,0 +1,33 @@
+---
+- name: dev | nodejs
+  tags: [nodejs, nvm]
+  block:
+    - name: dev | nodejs | nvm | check
+      tags: [nodejs, nvm]
+      shell: command -v nvm
+      register: nvm_exists
+      ignore_errors: yes
+
+    - name: dev | nodejs | nvm
+      tags: [nodejs, nvm]
+      block: 
+        - name: dev | nodejs | nvm | download
+          tags: [nodejs, nvm]
+          get_url:
+            url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
+            dest: /tmp/nvm.install.sh
+            mode: "0755"
+            force: yes
+
+        - name: dev | nodejs | nvm | install
+          tags: [nodejs, nvm]
+          shell: /tmp/nvm.install.sh
+
+        - name: dev | nodejs | nvm | cleanup
+          tags: [nodejs, nvm]
+          file: 
+            path: /tmp/nvm.install.sh
+            state: absent
+      
+      when: nvm_exists is failed
+      

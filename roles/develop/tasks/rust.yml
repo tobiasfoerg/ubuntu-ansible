@@ -1,0 +1,40 @@
+---
+
+- name: dev | rust
+  tags: [rust, cargo]
+  block:
+    - name: dev | rust | check
+      tags: [rust, cargo]
+      shell: command -v cargo
+      register: cargo_exists
+      ignore_errors: yes
+
+    - name: dev | rust
+      block:
+        - name: dev | rust | download
+          tags: [rust, cargo]
+          get_url: 
+            url: https://sh.rustup.rs
+            dest: /tmp/sh.rustup.rs
+            mode: "0755"
+            force: yes
+
+        - name: dev | rust | install
+          tags: [rust, cargo]
+          shell: /tmp/sh.rustup.rs -y
+
+        - name: dev | rust | cleanup
+          tags: [rust, cargo]
+          file:
+            path: /tmp/sh.rustup.rs
+            state: absent    
+        # TODO: verify if rust is in the path after the first install
+      when: cargo_exists is failed
+    
+    - name: dev | rust | cargo | upgrade
+      tags: [rust, cargo]
+      shell: rustup update
+    
+    - name: dev | rust | cargo | install cargo-edit
+      tags: [rust, cargo]
+      shell: cargo install cargo-edit
